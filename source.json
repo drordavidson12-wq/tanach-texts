@@ -1,0 +1,10 @@
+{
+ "source": "Unicode/XML Leningrad Codex (UXLC), tanach.us",
+ "download": "https://tanach.us/Books/Tanach.xml.zip",
+ "version": "UXLC 2.6",
+ "build": "27.7",
+ "build_date": "2026-10-18",
+ "sha256": "423469bdcc4bfe36d7666f8e76fbd02c1674d77469093c06cee9779c0fba83e3",
+ "license": "Public Domain: \"All biblical Hebrew text, in any format, may be viewed or copied without restriction.\" (License.html in the zip)",
+ "citation": "Unicode/XML Leningrad Codex: UXLC 2.6 (27.7), Tanach.us Inc., West Redding, CT, USA, Oct 2026."
+}
