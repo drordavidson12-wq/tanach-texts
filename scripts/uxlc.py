@@ -3,8 +3,8 @@
 Builds tanakh/ and tanakh-teamim/ directly from the Unicode/XML Leningrad Codex (UXLC),
 as published by tanach.us (not through Sefaria).
 
-    # download and unzip https://tanach.us/Books/Tanach.xml.zip first, then:
-    python3 scripts/uxlc.py <folder with the unzipped Books/*.xml>
+    python3 scripts/uxlc.py                      # downloads the current Tanach.xml.zip (upgrade)
+    python3 scripts/uxlc.py <folder with Books/>  # or: from an already unzipped copy
 
 The Hebrew characters are copied exactly as they are in the XML (no Unicode normalization).
 - tanakh-teamim/: the words as they are, with niqqud and te'amim.
@@ -104,10 +104,43 @@ def verse_text(v):
     return s
 
 
+ZIP_URL = "https://tanach.us/Books/Tanach.xml.zip"
+
+
+def download():
+    """Downloads the current Tanach.xml.zip and records its version, build and SHA-256 in source.json.
+    Returns a function that reads one book's XML from the zip."""
+    import hashlib, io, urllib.request, zipfile
+    req = urllib.request.Request(ZIP_URL, headers={"User-Agent": "tanach-texts/1.0 (+https://github.com/drordavidson12-wq/tanach-texts)"})
+    raw = urllib.request.urlopen(req, timeout=120).read()
+    zf = zipfile.ZipFile(io.BytesIO(raw))
+    header = zf.read("Books/TanachHeader.xml").decode("utf-8")
+    version = re.search(r"<version>([^<]+)</version>", header).group(1).strip()
+    build = re.search(r"<build>([^<]+)</build>", header).group(1).strip()
+    src = json.load(open(ROOT / "source.json", encoding="utf-8"))
+    sha = hashlib.sha256(raw).hexdigest()
+    if (src.get("build"), src.get("sha256")) != (build, sha):
+        # a new version: check build_date against https://tanach.us/Pages/Technical.html and fill it in by hand
+        src.update({
+            "version": version, "build": build, "build_date": None, "sha256": sha,
+            "citation": f"Unicode/XML Leningrad Codex: {version} ({build}), Tanach.us Inc., West Redding, CT, USA.",
+        })
+    with open(ROOT / "source.json", "w", encoding="utf-8") as f:
+        json.dump(src, f, ensure_ascii=False, indent=1)
+    print(f"downloaded {version}, build {build}, sha256 {src['sha256']}")
+    return lambda name: ET.fromstring(zf.read(f"Books/{name}.xml"))
+
+
 def main():
-    books_dir = Path(sys.argv[1])
+    # no argument: download the current version from tanach.us (this is how to upgrade)
+    # with an argument: a folder with the unzipped Books/*.xml
+    if len(sys.argv) > 1:
+        books_dir = Path(sys.argv[1])
+        read = lambda name: ET.parse(books_dir / f"{name}.xml").getroot()
+    else:
+        read = download()
     for xml_name, fid, he in BOOKS:
-        root = ET.parse(books_dir / f"{xml_name}.xml").getroot()
+        root = read(xml_name)
         chapters = []
         for c in root.iter("c"):
             chapters.append([verse_text(v) for v in c.findall("v")])

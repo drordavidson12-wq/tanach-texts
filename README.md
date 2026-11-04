@@ -42,6 +42,12 @@ The verses use the **common Jewish numbering** (as in Sefaria and most printed T
 
 tanach.us asks that the text not be called the "Westminster Leningrad Codex (WLC)". It isn't.
 
+## Updating to a new UXLC version
+tanach.us updates UXLC about twice a year and keeps only the latest file. This repository is the **pinned copy**: the Scroll Tanach app builds its Tanakh text from a fixed commit of this repository, not from tanach.us, so a new version there changes nothing until someone updates on purpose:
+
+1. Here: `python3 scripts/uxlc.py`. This downloads the current `Tanach.xml.zip`, records its version, build and SHA-256 in `source.json`, and rebuilds `tanakh/` and `tanakh-teamim/`. Fill in `build_date` from the [Technical page](https://tanach.us/Pages/Technical.html), review the diff, then commit and push.
+2. In the app: set `TANACH_TEXTS_COMMIT` in `scripts/build-texts.py` to the new commit and run the build. It fails if its text differs from this repository by even one character.
+
 ## Not included
 - **Commentaries** (Rashi and others): they were removed from this repository. Their digital editions were downloaded through Sefaria, whose terms of use require written permission for commercial use. They may come back once that permission is received.
 - Nothing licensed CC-BY-SA, NC or "unknown", no app code, no keys or secrets.
