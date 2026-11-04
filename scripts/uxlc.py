@@ -98,6 +98,20 @@ def ketiv_qere(ketiv, qere):
     return "{" + k + "}" + sep + "[" + q + "]"
 
 
+OUR_NOTATION = re.compile(r"[{}\[\]\s]|\((?:פ|ס)\)")
+
+
+def source_chars(v):
+    """All the Hebrew characters of a verse exactly as in the XML, in order, without spaces."""
+    return "".join(re.sub(r"\s", "", text_of(el)) for el in v if el.tag in ("w", "k", "q"))
+
+
+def check_unchanged(v, text):
+    """The text we write may differ from the source only by our own notation: {} [] (פ) (ס) and spaces."""
+    if OUR_NOTATION.sub("", text) != source_chars(v):
+        raise SystemExit(f"STOP: verse {v.get('n')} differs from the source beyond notation: {text!r}")
+
+
 def verse_text(v):
     parts, brk = [], None
     i, kids = 0, list(v)
@@ -165,7 +179,12 @@ def main():
         root = read(xml_name)
         chapters = []
         for c in root.iter("c"):
-            chapters.append([verse_text(v) for v in c.findall("v")])
+            verses = []
+            for v in c.findall("v"):
+                text = verse_text(v)
+                check_unchanged(v, text)
+                verses.append(text)
+            chapters.append(verses)
         teamim = common_numbering(fid, chapters)
         nikud = [[TEAMIM.sub("", re.sub(r"\s*\((פ|ס)\)", "", v)) for v in ch] for ch in chapters]
         for folder, data in (("tanakh-teamim", teamim), ("tanakh", nikud)):
