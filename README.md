@@ -18,7 +18,18 @@ Taken directly from the **Unicode/XML Leningrad Codex (UXLC)** published by [tan
 - **The Hebrew characters are exactly as in the UXLC XML files.** No Unicode normalization. **Do not apply Unicode normalization (NFC/NFKC) when copying:** it reorders the vowel and accent marks. The source also uses the invisible character U+034F (combining grapheme joiner) in some words, for example `יְרוּשָׁלָֽ͏ִם`, to keep two vowels under one letter in the right order. Copy it as is.
 - **`tanakh-teamim/`:** every word exactly as in the source, with niqqud and te'amim.
 - **`tanakh/`:** the same text with only the te'amim (Unicode U+0591–U+05AF) removed. Everything else stays: niqqud, **meteg** (the small vertical line, e.g. `הָרָֽעַשׁ`), maqaf, sof pasuq and paseq.
-- **Ketiv and qere:** the ketiv appears without niqqud, followed by the qere with niqqud in square brackets: `הוצא [הַיְצֵא]`.
+- **Ketiv and qere:** the ketiv (as written, without niqqud) is always in curly braces, and the qere (as read, with niqqud) is always in square brackets:
+
+  | Case | Example |
+  |---|---|
+  | one word read as another | `{הוצא} [הַיְצֵא]` (Genesis 8:17) |
+  | two words read as one | `{מי אתי} [מֵאִתִּֽי׃]` (Isaiah 44:24) |
+  | one word read as two | `{אשדת} [אֵשׁ דָּת]` (Deuteronomy 33:2) |
+  | two words read as two others | `{מנ הסערה} [מִן ׀ הַסְּעָרָה]` (Job 38:1) |
+  | **written, not read** (ketiv without qere) | `{חמש}` (Ezekiel 48:16) |
+  | **read, not written** (qere without ketiv) | `[בָּאִים]` (Jeremiah 31:38) |
+
+  When the ketiv ends with a maqaf, there is no space before the qere: `{לך־}[לְכָה־]` (Numbers 23:13). The braces and brackets are our notation, not part of the manuscript text; everything inside them is exactly as in the source.
 - **Parasha breaks:** in `tanakh-teamim/` the open and closed parasha marks appear as `(פ)` and `(ס)`. In `tanakh/` they are not included.
 - **Large letters** (e.g. the ע and ד of שמע ישראל) are plain letters here. Editorial note markers from the XML are not included.
 - **The text follows the Leningrad Codex**, so in a few places it differs from some printed editions. For example `ויחראף` (Numbers 12:9) and `הללויה` (Psalms 149–150) are written as one word, and the repeated verse at the end of Lamentations and Ecclesiastes is not included.

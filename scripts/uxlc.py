@@ -10,7 +10,7 @@ The Hebrew characters are copied exactly as they are in the XML (no Unicode norm
 - tanakh-teamim/: the words as they are, with niqqud and te'amim.
 - tanakh/: the same words with the te'amim (cantillation marks U+0591-U+05AF) removed.
   Nothing else is removed: niqqud, meteg, maqaf, sof pasuq and paseq stay.
-Markup handled: <w> word, <k>/<q> ketiv/qere ("ketiv [qere]"), <s> large/small letter
+Markup handled: <w> word, <k>/<q> ketiv/qere ("{ketiv} [qere]", see ketiv_qere), <s> large/small letter
 (the letter is kept), <x> editorial note marker (removed), <pe/>/<samekh/> open/closed
 parasha (written as "(פ)"/"(ס)" in tanakh-teamim/ only).
 """
@@ -77,6 +77,27 @@ def text_of(el):
     return "".join(out).strip()
 
 
+def join_words(words):
+    """Words joined by a space, except after a maqaf (the next word is attached)."""
+    s = ""
+    for w in words:
+        s += w if (not s or s.endswith(MAQAF)) else " " + w
+    return s
+
+
+def ketiv_qere(ketiv, qere):
+    """One ketiv/qere unit: the ketiv words in {}, the qere words in [].
+    {הוצא} [הַיְצֵא] · {מי אתי} [מֵאִתִּי] · {אשדת} [אֵשׁ דָּת] · {חמש} (ketiv, not read) · [בָ] (qere, not written)"""
+    k = join_words(ketiv)
+    q = join_words(qere)
+    if not qere:
+        return "{" + k + "}"
+    if not ketiv:
+        return "[" + q + "]"
+    sep = "" if k.endswith(MAQAF) else " "
+    return "{" + k + "}" + sep + "[" + q + "]"
+
+
 def verse_text(v):
     parts, brk = [], None
     i, kids = 0, list(v)
@@ -84,16 +105,17 @@ def verse_text(v):
         el = kids[i]
         if el.tag == "w":
             parts.append(text_of(el))
-        elif el.tag == "k":
-            ketiv = text_of(el)
-            if i + 1 < len(kids) and kids[i + 1].tag == "q":
-                sep = "" if ketiv.endswith(MAQAF) else " "
-                parts.append(f"{ketiv}{sep}[{text_of(kids[i + 1])}]")
+        elif el.tag in ("k", "q"):
+            # a unit is one or more <k> followed by one or more <q> (or only <k>, or only <q>)
+            ketiv, qere = [], []
+            while i < len(kids) and kids[i].tag == "k":
+                ketiv.append(text_of(kids[i]))
                 i += 1
-            else:
-                parts.append(ketiv)
-        elif el.tag == "q":  # qere without ketiv
-            parts.append(f"[{text_of(el)}]")
+            while i < len(kids) and kids[i].tag == "q":
+                qere.append(text_of(kids[i]))
+                i += 1
+            parts.append(ketiv_qere(ketiv, qere))
+            continue
         elif el.tag in ("pe", "samekh"):
             brk = "פ" if el.tag == "pe" else "ס"
             parts.append(f"({brk})")
