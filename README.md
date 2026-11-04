@@ -23,11 +23,11 @@ Taken directly from the **Unicode/XML Leningrad Codex (UXLC)** published by [tan
   | Case | Example |
   |---|---|
   | one word read as another | `{הוצא} [הַיְצֵא]` (Genesis 8:17) |
-  | two words read as one | `{מי אתי} [מֵאִתִּֽי׃]` (Isaiah 44:24) |
-  | one word read as two | `{אשדת} [אֵשׁ דָּת]` (Deuteronomy 33:2) |
-  | two words read as two others | `{מנ הסערה} [מִן ׀ הַסְּעָרָה]` (Job 38:1) |
+  | two words read as one | `{מי אתי} [מֵאִתִּֽי׃]` (Isaiah 44:24) |
+  | one word read as two | `{אשדת} [אֵשׁ דָּת]` (Deuteronomy 33:2) |
+  | two words read as two others | `{מנ הסערה} [מִן ׀ הַסְּעָרָה]` (Job 38:1) |
   | **written, not read** (ketiv without qere) | `{חמש}` (Ezekiel 48:16) |
-  | **read, not written** (qere without ketiv) | `[בָּאִים]` (Jeremiah 31:38) |
+  | **read, not written** (qere without ketiv) | `[בָאִים]` (Jeremiah 31:38) |
 
   When the ketiv ends with a maqaf, there is no space before the qere: `{לך־}[לְכָה־]` (Numbers 23:13). The braces and brackets are our notation, not part of the manuscript text; everything inside them is exactly as in the source.
 - **Parasha breaks:** in `tanakh-teamim/` the open and closed parasha marks appear as `(פ)` and `(ס)`. In `tanakh/` they are not included.
